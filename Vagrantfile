@@ -19,8 +19,16 @@ Vagrant.configure("2") do |config|
       vb.memory = "2048"
       vb.gui = false
     end
+
     centos1.vm.hostname = "projectl"
     centos1.vm.network "private_network", ip: "192.168.56.10"
 	centos1.vm.provision "shell", "inline": $script_centos
+
+    app.vm.provision "ansible_local" do |ansible|
+	  ansible.playbook = "playbooks/docker.yaml"
+	  ansible.become = true
+	  ansible.become_user = "root"
+	end
+
   end
 end
