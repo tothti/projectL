@@ -3,9 +3,13 @@
   become: yes
 
   tasks:
+  - name: Installing docker python library using Ansible pip module
+    pip:
+      name: docker
+
   - name: Add docker repository
     copy:
-      src: files/docker-ce.repo
+      src: /vagrant/files/docker-ce.repo
       dest: /etc/yum.repos.d/docker-ce.repo
 
   - name: Install docker-ce
@@ -40,7 +44,7 @@
 
   - name: copy nginx config
     copy:
-      src: files/proxy.conf
+      src: /vagrant/files/proxy.conf
       dest: /apps/nginx/proxy.conf
 
   - name: start mysql container
