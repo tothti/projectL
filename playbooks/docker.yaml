@@ -50,7 +50,7 @@
   - name: copy nginx config
     copy:
       src: /vagrant/files/proxy.conf
-      dest: /apps/nginx/proxy.conf
+      dest: /apps/nginx/default.conf
 
   - name: Create a network
     docker_network:
@@ -102,7 +102,7 @@
       ports:
         - "80:80"
       volumes:
-        - /apps/nginx:/etc/nginx/default.d
+        - /apps/nginx/default.conf:/etc/nginx/conf.d/default.conf
       networks:
         - name: wpnet
           aliases: nginx
