@@ -3,6 +3,11 @@
   become: yes
 
   tasks:
+  - name: Install python2-pip
+    yum:
+      name: python2-pip
+      state: latest
+      
   - name: Installing docker python library using Ansible pip module
     pip:
       name: docker
@@ -47,6 +52,10 @@
       src: /vagrant/files/proxy.conf
       dest: /apps/nginx/proxy.conf
 
+  - name: Create a network
+    docker_network:
+      name: wpnet
+
   - name: start mysql container
     docker_container:
       name: mysql
@@ -61,6 +70,9 @@
         MYSQL_RANDOM_ROOT_PASSWORD: '1'
       volumes:
         - /apps/mysql:/var/lib/mysql
+      networks:
+        - name: wpnet
+          aliases: mysql
         
   - name: start wordpress container
     docker_container:
@@ -76,6 +88,9 @@
         WORDPRESS_DB_NAME: wordpressdb
       volumes:
         - /apps/wordpress:/var/www/html
+      networks:
+        - name: wpnet
+          aliases: wordpress
 
   - name: start nginx container
     docker_container:
@@ -88,3 +103,6 @@
         - "80:80"
       volumes:
         - /apps/nginx:/etc/nginx/default.d
+      networks:
+        - name: wpnet
+          aliases: nginx
