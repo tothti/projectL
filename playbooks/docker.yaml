@@ -1,7 +1,8 @@
 --- # This playbook will install docker on Centos 7
 - hosts: all
   become: yes
-
+  vars:
+    URL: 192.168.56.10
   tasks:
   - name: Install python2-pip
     yum:
@@ -69,7 +70,7 @@
         MYSQL_PASSWORD: wordpresspass
         MYSQL_RANDOM_ROOT_PASSWORD: '1'
       volumes:
-        - /apps/mysql:/var/lib/mysql
+         - /apps/mysql:/var/lib/mysql
       networks:
         - name: wpnet
           aliases: mysql
@@ -86,13 +87,22 @@
         WORDPRESS_DB_USER: wordpressuser
         WORDPRESS_DB_PASSWORD: wordpresspass
         WORDPRESS_DB_NAME: wordpressdb
-        WORDPRESS_WEBSITE_URL: http://192.168.56.10
       volumes:
         - /apps/wordpress:/var/www/html
       networks:
         - name: wpnet
           aliases: wordpress
 
+  - name: Update Wordpress config file
+    lineinfile:
+      path: /apps/wordpress/wp-config.php
+      line: define('WP_HOME','http://{{ URL }}');
+
+  - name: Update Wordpress config file
+    lineinfile:
+      path: /apps/wordpress/wp-config.php
+      line: define('WP_SITEURL','http://{{ URL }}');
+ 
   - name: start nginx container
     docker_container:
       name: nginx
